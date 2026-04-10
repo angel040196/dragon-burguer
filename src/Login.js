@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { supabase } from "./supabaseClient"
+import { useNavigate } from "react-router-dom"
 
 function Login() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [message, setMessage] = useState("")
+  const navigate = useNavigate()
 
   // Validaciones simples
   const validateForm = () => {
@@ -19,7 +21,7 @@ function Login() {
     return true
   }
 
-  // Iniciar sesión
+  // Iniciar sesión con correo/contraseña
   const handleLogin = async (e) => {
     e.preventDefault()
     if (!validateForm()) return
@@ -32,6 +34,7 @@ function Login() {
     } else {
       setMessage("✅ Sesión iniciada correctamente")
       console.log("Usuario:", data.user)
+      navigate("/menu") // redirige al menú
     }
   }
 
@@ -48,23 +51,27 @@ function Login() {
     } else {
       setMessage("✅ Usuario registrado correctamente")
       console.log("Usuario:", data.user)
+      navigate("/menu") // redirige al menú
     }
   }
 
-  // Login con proveedores externos (aún no configurados)
+  // Login con proveedores externos (Google, Facebook, Apple)
   const handleOAuthLogin = async (provider) => {
-    const { error } = await supabase.auth.signInWithOAuth({ provider })
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: "https://dragon-burguer.vercel.app/menu", // redirige al menú en producción
+      },
+    })
     if (error) {
       console.error(`❌ Error con ${provider}:`, error.message)
-    } else {
-      console.log(`✅ Sesión iniciada con ${provider}`)
     }
   }
 
   // Invitado
   const handleGuest = () => {
     setMessage("👤 Entraste como invitado (no podrás comprar)")
-    // Aquí puedes guardar un estado global tipo role: "guest"
+    navigate("/menu") // también lo manda al menú
   }
 
   return (

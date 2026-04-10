@@ -7,6 +7,7 @@ function Carrito() {
   const [user, setUser] = useState(null)
   const navigate = useNavigate()
 
+  // Obtener usuario en sesión
   useEffect(() => {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
@@ -15,6 +16,7 @@ function Carrito() {
     getUser()
   }, [])
 
+  // Obtener carrito del usuario
   useEffect(() => {
     const getCarrito = async () => {
       if (!user) return
@@ -28,10 +30,9 @@ function Carrito() {
             nombre,
             precio,
             imagen
-    )
-  `)
-  .eq("usuario_id", user.id)
-
+          )
+        `)
+        .eq("usuario_id", user.id)
 
       if (error) {
         console.error("❌ Error cargando carrito:", error.message)
@@ -42,6 +43,7 @@ function Carrito() {
     getCarrito()
   }, [user])
 
+  // Calcular total
   const total = items.reduce(
     (acc, item) => acc + item.cantidad * item.hamburguesas.precio,
     0
@@ -61,7 +63,7 @@ function Carrito() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Carrito de compras</h1>
+      <h1 className="text-2xl font-bold mb-4">Carrito de compras 🛒</h1>
       {items.length === 0 ? (
         <p>No hay productos en el carrito.</p>
       ) : (
@@ -77,14 +79,23 @@ function Carrito() {
             <tbody>
               {items.map((item) => (
                 <tr key={item.id}>
-                  <td className="border p-2">{item.hamburguesas.nombre}</td>
+                  <td className="border p-2 flex items-center gap-2">
+                    {item.hamburguesas.imagen && (
+                      <img
+                        src={item.hamburguesas.imagen}
+                        alt={item.hamburguesas.nombre}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                    {item.hamburguesas.nombre}
+                  </td>
                   <td className="border p-2">{item.cantidad}</td>
                   <td className="border p-2">${item.hamburguesas.precio}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <h2 className="text-xl font-bold mt-4">Total: ${total}</h2>
+          <h2 className="text-xl font-bold mt-4">Total: ${total.toFixed(2)}</h2>
           <button
             onClick={() => navigate("/checkout")}
             className="mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
