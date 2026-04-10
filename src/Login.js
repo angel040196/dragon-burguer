@@ -34,7 +34,7 @@ function Login() {
     } else {
       setMessage("✅ Sesión iniciada correctamente")
       console.log("Usuario:", data.user)
-      navigate("/menu") // redirige al menú
+      navigate("/menu")
     }
   }
 
@@ -51,7 +51,7 @@ function Login() {
     } else {
       setMessage("✅ Usuario registrado correctamente")
       console.log("Usuario:", data.user)
-      navigate("/menu") // redirige al menú
+      navigate("/menu")
     }
   }
 
@@ -60,7 +60,7 @@ function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: "https://dragon-burguer.vercel.app/menu", // redirige al menú en producción
+        redirectTo: `${window.location.origin}/menu`, // se adapta automáticamente
       },
     })
     if (error) {
@@ -71,7 +71,7 @@ function Login() {
   // Invitado
   const handleGuest = () => {
     setMessage("👤 Entraste como invitado (no podrás comprar)")
-    navigate("/menu") // también lo manda al menú
+    navigate("/menu")
   }
 
   return (

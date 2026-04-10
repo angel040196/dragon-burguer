@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react"
 import { supabase } from "./supabaseClient"
-import { FaUserCircle, FaShoppingCart, FaHome, FaSignOutAlt, FaUtensils } from "react-icons/fa"
+import {
+  FaUserCircle,
+  FaShoppingCart,
+  FaHome,
+  FaSignOutAlt,
+  FaUtensils,
+  FaListAlt
+} from "react-icons/fa"
 import { Link } from "react-router-dom"
 
 function Navbar() {
@@ -31,7 +38,7 @@ function Navbar() {
   }
 
   return (
-    <nav className="bg-red-600 text-white p-4 flex justify-between items-center">
+    <nav className="bg-red-600 text-white p-4 flex justify-between items-center shadow-md">
       {/* Logo con link al Home */}
       <Link to="/" className="flex items-center gap-2 hover:text-gray-200">
         <FaHome size={22} />
@@ -52,28 +59,33 @@ function Navbar() {
           <span>Carrito</span>
         </Link>
 
-        {/* Botón de iniciar sesión */}
-        <Link
-          to="/login"
-          className="flex items-center gap-2 bg-white text-red-600 px-3 py-1 rounded-lg hover:bg-gray-200"
-        >
-          <FaUserCircle size={22} />
-          <span>Iniciar sesión</span>
+        {/* Historial de pedidos */}
+        <Link to="/historial" className="flex items-center gap-2 hover:text-gray-200">
+          <FaListAlt size={22} />
+          <span>Mis pedidos</span>
         </Link>
 
+        {/* Botón de iniciar sesión */}
+        {!user && (
+          <Link
+            to="/login"
+            className="flex items-center gap-2 bg-white text-red-600 px-3 py-1 rounded-lg hover:bg-gray-200"
+          >
+            <FaUserCircle size={22} />
+            <span>Iniciar sesión</span>
+          </Link>
+        )}
+
         {/* Botón de cerrar sesión (solo activo si hay usuario) */}
-        <button
-          onClick={handleLogout}
-          disabled={!user}
-          className={`flex items-center gap-2 px-3 py-1 rounded-lg ${
-            user
-              ? "bg-white text-red-600 hover:bg-gray-200"
-              : "bg-gray-400 text-white cursor-not-allowed"
-          }`}
-        >
-          <FaSignOutAlt />
-          <span>Cerrar sesión</span>
-        </button>
+        {user && (
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-white text-red-600 px-3 py-1 rounded-lg hover:bg-gray-200"
+          >
+            <FaSignOutAlt />
+            <span>Cerrar sesión</span>
+          </button>
+        )}
       </div>
     </nav>
   )

@@ -14,6 +14,15 @@ function Carrito() {
       setUser(user)
     }
     getUser()
+
+    // Escuchar cambios de sesión
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
   // Obtener carrito del usuario
@@ -37,6 +46,7 @@ function Carrito() {
       if (error) {
         console.error("❌ Error cargando carrito:", error.message)
       } else {
+        console.log("✅ Carrito recibido:", data)
         setItems(data)
       }
     }
@@ -45,7 +55,7 @@ function Carrito() {
 
   // Calcular total
   const total = items.reduce(
-    (acc, item) => acc + item.cantidad * item.hamburguesas.precio,
+    (acc, item) => acc + item.cantidad * (item.hamburguesas?.precio || 0),
     0
   )
 
@@ -80,17 +90,17 @@ function Carrito() {
               {items.map((item) => (
                 <tr key={item.id}>
                   <td className="border p-2 flex items-center gap-2">
-                    {item.hamburguesas.imagen && (
+                    {item.hamburguesas?.imagen && (
                       <img
                         src={item.hamburguesas.imagen}
                         alt={item.hamburguesas.nombre}
                         className="w-12 h-12 object-cover rounded"
                       />
                     )}
-                    {item.hamburguesas.nombre}
+                    {item.hamburguesas?.nombre}
                   </td>
                   <td className="border p-2">{item.cantidad}</td>
-                  <td className="border p-2">${item.hamburguesas.precio}</td>
+                  <td className="border p-2">${item.hamburguesas?.precio}</td>
                 </tr>
               ))}
             </tbody>
